@@ -1,7 +1,5 @@
 package com.datastructures;
 
-import java.util.Iterator;
-
 public class StackArray {
 	private int capacity;
 	private final static int CAPACITY=10;
@@ -25,8 +23,7 @@ public class StackArray {
 			throw new Exception("stack overflow exception");
 		}
 		
-			stackRep[++top]=capacity;
-			System.out.println("data pushed to stack");
+			stackRep[++top]=data;
 	}
 	public int peek() throws Exception{
 		if(isEmpty()) {
@@ -46,19 +43,20 @@ public class StackArray {
 		if(isEmpty()) {
 			throw new Exception("stack underflow exception");
 		}
-		else {
-			for(int i=0;i<=arraysize();i++) {
-				i = stackRep[top++];
-				System.out.println(i);
+			for(int i=0;i<arraysize();i++) {
+				int temp  = stackRep[i];
+				System.out.println(temp);
 			}
 			
-			}
 		}
 	public static void main(String[] args) throws Exception {
 		StackArray stack =new StackArray();
 		stack.push(10);
 		stack.push(20);
-		stack.peek();
+		System.out.println(stack.peek());
+		stack.printStack();
+		stack.pop();
+		System.out.println("+++++++++++");
 		stack.printStack();
 		
 	}

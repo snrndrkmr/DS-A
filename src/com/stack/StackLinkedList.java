@@ -45,6 +45,7 @@ public class StackLinkedList implements Stack {
 		ListNode temp = top.getNext();
 		top.setNext(null);
 		top = temp;
+		length--;
 		return top.getData();
 	}
 	public void print() {

@@ -3,13 +3,17 @@ package com.queue;
 import com.util.ListNode;
 
 public class QueueLinkedList implements QueueADT{
-	private ListNode rear=null;
-	private ListNode front=null;
+	private ListNode rear;
+	private ListNode front;
 	private static int length=0;
+	public QueueLinkedList() {
+		this.front =null;
+		this.rear = null;
+	}
 	@Override
 	public boolean isEmpty() {
 		// TODO Auto-generated method stub
-		return (rear==null);
+		return (front==null && rear==null);
 	}
 
 	@Override
@@ -20,13 +24,15 @@ public class QueueLinkedList implements QueueADT{
 
 	@Override
 	public void Enqueue(int data) throws QueueIsFull {
-		// TODO Auto-generated method stub
 		ListNode node = new ListNode(data);
-		node.setNext(rear);
-		rear = node;
-		if(length<1) {
-		front = rear;
+		node.setNext(null);
+		if(front ==null && rear == null)
+		{
+			front = rear = node;
+			return ;
 		}
+		rear.setNext(node);
+		rear = node;
 		length++;
 		
 	}
@@ -46,12 +52,18 @@ public class QueueLinkedList implements QueueADT{
 	@Override
 	public int Front() throws QueueIsFull {
 		// TODO Auto-generated method stub
+		if(isEmpty()) {
+			throw new QueueIsFull("queue is empty");
+		}
 		return front.getData();
 	}
 
 	@Override
 	public int Rear() {
 		// TODO Auto-generated method stub
+		if(isEmpty()) {
+			throw new QueueIsFull("queue is empty");
+		}
 		return rear.getData();
 	}
 	public void print() throws QueueIsFull{
@@ -60,11 +72,11 @@ public class QueueLinkedList implements QueueADT{
 			
 		}
 		ListNode temp = front;
-		while(front.getNext()!=null) {
-			System.out.println(front.getData());
-			front=front.getNext();
+		while(temp.getNext()!=null) {
+			System.out.println(temp.getData());
+			temp=temp.getNext();
 		}
-		System.out.println(front.getData());
+		System.out.println(temp.getData());
 	}
 	
 	public static void main(String[] args) {

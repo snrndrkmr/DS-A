@@ -1,23 +1,22 @@
 package com.linkedList;
 
-
-
-public class DoubleLinkedList implements Doubly{
-	
-	private static DoubleListNode head;
+public class CircularLinkedList implements Doubly{
+	private DoubleListNode head;
 	private DoubleListNode tail;
 	private int length;
-	
-	public DoubleLinkedList() {
+	public CircularLinkedList() {
 		head = new DoubleListNode(Integer.MIN_VALUE,null,null);
-		tail = new DoubleListNode(Integer.MIN_VALUE,head,null);
+		tail = new DoubleListNode(Integer.MIN_VALUE,null,null);
 		head.setNext(tail);
+		head.setPrev(tail);
+		tail.setPrev(head);
+		tail.setNext(head);
 		length =0;
 	}
 	@Override
 	public boolean isEmpty() {
 		// TODO Auto-generated method stub
-		return (head==null);
+		return (head == null);
 	}
 
 	@Override
@@ -29,10 +28,13 @@ public class DoubleLinkedList implements Doubly{
 	@Override
 	public void InsertAtBegin(int data) {
 		// TODO Auto-generated method stub
-		DoubleListNode newNode = new DoubleListNode(data,null,head);
-		newNode.getNext().setPrev(newNode);
-		/*newNode.setNext(head);*/
-		head = newNode;
+		DoubleListNode node = new DoubleListNode(data,tail,head);
+		tail = head.getPrev();
+		node.setNext(head);
+		node.setPrev(tail);
+		tail.setNext(node);
+		head.setPrev(node);
+		head=node;
 		length++;
 		
 	}
@@ -72,10 +74,15 @@ public class DoubleLinkedList implements Doubly{
 	@Override
 	public void InsertAtEnd(int data) {
 		// TODO Auto-generated method stub
-		DoubleListNode newNode = new DoubleListNode(data,tail.getPrev(),tail);
-		newNode.getPrev().setNext(newNode);
-		tail.setPrev(newNode);
+		DoubleListNode node = new DoubleListNode(data,tail,head);
+		head = tail.getNext();
+		node.setNext(head);
+		node.setPrev(tail);
+		tail.setNext(node);
+		head.setPrev(node);
+		tail=node;
 		length++;
+		
 	}
 
 	@Override
@@ -113,13 +120,13 @@ public class DoubleLinkedList implements Doubly{
 	@Override
 	public void DeleteAtBegin() {
 		// TODO Auto-generated method stub
-		if(isEmpty()) {
-			System.out.println("list is empty");
-			return;
-		}
-		DoubleListNode temp = head.getNext();
+		DoubleListNode node = head.getNext();
+		DoubleListNode tail = head.getPrev();
+		tail.setNext(node);
+		node.setPrev(tail);
 		head.setNext(null);
-		head=temp;
+		head.setPrev(null);
+		head = node;
 		length--;
 		
 	}
@@ -127,70 +134,41 @@ public class DoubleLinkedList implements Doubly{
 	@Override
 	public void DeleteAtEnd() {
 		// TODO Auto-generated method stub
-		if(isEmpty()) {
-			System.out.println("list is empty");
-			return;
-		}
-		DoubleListNode temp = tail.getPrev();
-		tail.getPrev().setNext(null);
+		DoubleListNode node = tail.getPrev();
+		DoubleListNode head = tail.getNext();
+		node.setNext(head);
+		head.setPrev(node);
+		tail.setNext(null);
 		tail.setPrev(null);
-		tail=temp;
+		tail=node;
 		length--;
+		
 	}
 
 	@Override
 	public void PrintList() {
 		// TODO Auto-generated method stub
 		DoubleListNode temp = head;
-		System.out.println("the list is:");
-		while(temp!=null) {
-			
+		System.out.println("The List is");
+		while(temp != tail) {
 			System.out.print(temp.getData()+" ");
 			temp = temp.getNext();
 		}
+		System.out.print(temp.getData()+" ");
 		System.out.println("\n");
-	}
-	public void reversePrint() {
-		DoubleListNode temp = tail;
-		System.out.println("the reverse list is:");
-		while(temp!=null) {
-			System.out.print(temp.getData()+" ");
-			temp = temp.getPrev();
-		}
-		System.out.println("\n");
-	}
-	public void recursion(DoubleListNode head) {
-		if(head==null) {
-			return ;
-		}
-			System.out.print(head.getData()+" ");
-			recursion(head.getNext());
+		System.out.println(length);
+		
 	}
 	public static void main(String[] args) {
-		DoubleLinkedList list = new DoubleLinkedList();
-		list.InsertAtBegin(60);
-		list.InsertAtBegin(10);
-		list.InsertAtBegin(50);
-		list.InsertAtBegin(80);
-		list.InsertAtEnd(40);
-		list.InsertAtEnd(70);
-		list.InsertAtEnd(90);
-		list.InsertAtPosition(1, 20);
-		list.InsertAtPosition(2, 30);
-		list.InsertAtPosition(4, 100);
-		
-		list.PrintList();
-		list.reversePrint();
-		list.DeleteAtBegin();
-		list.DeleteAtBegin();
-		list.DeleteAtEnd();
-		list.DeleteAtEnd();
-		System.out.println("the recursive list is:");
-		list.recursion(head);
-		System.out.println("\n");
-		list.DeleteAtPosition(2);
-		list.recursion(head);
+		CircularLinkedList cll = new CircularLinkedList();
+		cll.InsertAtBegin(10);
+		cll.InsertAtEnd(30);
+		cll.InsertAtBegin(20);
+		cll.InsertAtEnd(40);
+		cll.PrintList();
+		System.out.println("++++++++++++++");
+		cll.DeleteAtBegin();
+		cll.DeleteAtEnd();
+		cll.PrintList();
 	}
-
-
 }

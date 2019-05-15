@@ -10,6 +10,13 @@ public class DoubleListNode {
 	}
 	public DoubleListNode(int data) {
 		this.data=data;
+		next =null;
+		prev=null;
+	}
+	public DoubleListNode(int data,DoubleListNode prev,DoubleListNode next) {
+		this.data=data;
+		this.next =next;
+		this.prev=prev;
 	}
 	public int getData() {
 		return data;

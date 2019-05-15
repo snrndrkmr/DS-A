@@ -1,9 +1,16 @@
 package com.deque;
 
 public class Deque implements DequeADT{
-	private DoubleListNode head =null;
-	private DoubleListNode tail=null;
+	private DoubleListNode head;
+	private DoubleListNode tail;
 	private int length = 0;
+	
+	public Deque() {
+		head = new DoubleListNode(Integer.MIN_VALUE,null,null);
+		tail = new DoubleListNode(Integer.MIN_VALUE,head,null);
+		head.setNext(tail);
+		length=0;
+	}
 
 	@Override
 	public boolean isEmpty() {
@@ -19,19 +26,18 @@ public class Deque implements DequeADT{
 
 	@Override
 	public void InsertAtBegin(int data){
-		DoubleListNode node = new DoubleListNode(data);
-		head.setNext(node);
-		head.setPrev(null);
+		DoubleListNode node = new DoubleListNode(data,null,head.getNext());
+		node.getNext().setPrev(node);
+		node.setNext(head);
 		head = node;
 		length++;
 	}
 
 	@Override
 	public void InsertAtEnd(int data) {
-		DoubleListNode node = new DoubleListNode(data);
-		tail.setNext(null);
+		DoubleListNode node = new DoubleListNode(data,tail.getPrev(),tail);
+		node.getPrev().setNext(node);
 		tail.setPrev(node);
-		tail = node;
 		length++;
 		
 	}
@@ -50,11 +56,12 @@ public class Deque implements DequeADT{
 
 	@Override
 	public int DeleteAtEnd() throws DequeError {
-		DoubleListNode temp = tail.getNext();
+		DoubleListNode temp = tail.getPrev();
 		if(isEmpty()) {
 			throw new DequeError("Deque is Empty");
 		}
-		tail.setNext(null);
+		tail.setPrev(null);
+		temp.setNext(null);
 		tail = temp;
 		length--;
 		return tail.getData();
@@ -84,11 +91,11 @@ public class Deque implements DequeADT{
 			throw new DequeError("Deque is Empty");
 		}
 		DoubleListNode temp = head;
-		while(temp.getNext()!=null) {
-			System.out.println(temp.getData());
+		while(temp!=null) {
+			System.out.print(temp.getData()+" ");
 			temp = temp.getNext();
 		}
-		System.out.println(temp.getData());
+		System.out.println("\n");
 	}
 	public static void main(String[] args) throws Exception{
 	 Deque q = new Deque();

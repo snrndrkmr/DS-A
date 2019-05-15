@@ -128,6 +128,7 @@ public class LinkedList{
 		
 		LinkedList list = new LinkedList();
 		list.insertAtBegin(10);
+		list.insertAtBegin(70);
 		list.insertAtMiddle(1,20);
 		list.insertAtMiddle(2, 30);
 		list.insertAtMiddle(3, 40);

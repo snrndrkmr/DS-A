@@ -2,6 +2,7 @@ package com.tree;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Stack;
 
 public class BinaryTree {
 	public int length =0;
@@ -89,6 +90,7 @@ public class BinaryTree {
 	public BinaryTreeNode deleteBinaryElement(BinaryTreeNode root,char data) {
 		BinaryTreeNode temp=null;
 		BinaryTreeNode deepest = deepestNode(root);
+		BinaryTreeNode ancestor = ancestor(root,deepest);
 		if(root==null) {
 			return null;
 		}
@@ -102,17 +104,35 @@ public class BinaryTree {
 			temp=q.poll();
 			if(temp!=null && temp.getData()==data) {
 				temp.setData(deepest.getData());
+				if(ancestor.getLeft()==deepest) {
+					ancestor.setLeft(null);
+				}
+				else {
+					ancestor.setRight(null);
+				}
 				/*deleteBinaryElement(deepest, deepest.getData());*/
 			}
 			if(temp.getLeft()!=null) {
 				if(temp.getLeft().getData()==data) {
 					temp.getLeft().setData(deepest.getData());
+					if(ancestor.getLeft()==deepest) {
+						ancestor.setLeft(null);
+					}
+					else {
+						ancestor.setRight(null);
+					}
 				}
 				q.offer(temp.getLeft());
 			}
 			if(temp.getRight()!=null) {
 				if(temp.getRight().getData()==data) {
 					temp.getRight().setData(deepest.getData());
+					if(ancestor.getLeft()==deepest) {
+						ancestor.setLeft(null);
+					}
+					else {
+						ancestor.setRight(null);
+					}
 				}
 				q.offer(temp.getRight());
 			}
@@ -143,17 +163,34 @@ public class BinaryTree {
 		postorder(root.getRight());
 		System.out.print(root.getData()+" ");
 	}
-	public boolean ancestor(BinaryTreeNode root,BinaryTreeNode node) {
+	public BinaryTreeNode ancestor(BinaryTreeNode root,BinaryTreeNode node) {
 		if(root==null) {
-			return false;
+			return null;
 		}
-		if(root.getLeft()==node || root.getRight()==node || 
-				ancestor(root.getLeft(),node) || ancestor(root.getRight(),node)) {
-			System.out.println(root.getData());
-			return true;
+		Stack<BinaryTreeNode> s = new Stack<BinaryTreeNode>();
+		s.push(root);
+		BinaryTreeNode prev = null;
+		BinaryTreeNode parent = null;
+		while(!s.isEmpty()) {
+			BinaryTreeNode curr = s.peek();
+			if(prev==null || prev.getLeft()==curr||prev.getRight()==curr) {
+				if(curr.getLeft()!=null) {
+					s.push(curr.getLeft());
+				}
+				else if(curr.getRight()!=null) {
+					s.push(curr.getRight());
+				}
+			}
+			else if(curr.getLeft()==prev || curr.getRight()==prev) {
+				parent = curr;
+				break;
+			}
+			else {
+				s.pop();
+			}
+			prev = curr;
 		}
-		
-		return false;
+		return parent;
 	}
 	public static void main(String[] args) {
 		BinaryTree t = new BinaryTree();
@@ -169,7 +206,9 @@ public class BinaryTree {
 		System.out.println("\n");
 		BinaryTreeNode temp = t.deepestNode(root);
 		System.out.println(temp.getData());
-		t.deleteBinaryElement(root, 'a');
+		BinaryTreeNode temp2 = t.ancestor(root, temp);
+		System.out.println(temp2.getData());
+		t.deleteBinaryElement(root, 'b');
 		t.preorder(root);
 	}
 }

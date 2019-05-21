@@ -5,6 +5,7 @@ import java.util.Queue;
 
 public class BinaryTree {
 	public int length =0;
+	static char arr;
 	public boolean isEmpty(BinaryTreeNode root) {
 		return (root==null);
 	}
@@ -130,6 +131,18 @@ public class BinaryTree {
 		preorder(root.getLeft());
 		preorder(root.getRight());
 	}
+	public boolean ancestor(BinaryTreeNode root,BinaryTreeNode node) {
+		if(root==null) {
+			return false;
+		}
+		if(root.getLeft()==node || root.getRight()==node || 
+				ancestor(root.getLeft(),node) || ancestor(root.getRight(),node)) {
+			System.out.println(root.getData());
+			return true;
+		}
+		
+		return false;
+	}
 	public static void main(String[] args) {
 		BinaryTree t = new BinaryTree();
 		BinaryTreeNode root = new BinaryTreeNode('a');
@@ -146,6 +159,7 @@ public class BinaryTree {
 		System.out.println(temp.getData());
 		BinaryTreeNode temp2 = t.DeepestParent(root);
 		System.out.println(temp2.getData());
+		t.ancestor(root, temp2);
 		/*t.deleteBinaryElement(root, 'a');
 		t.preorder(root);*/
 	}

@@ -201,7 +201,7 @@ public class BinaryTree {
 		t.insertInOrder(root, 'e');
 		t.insertInOrder(root, 'f');
 		t.insertInOrder(root, 'g');
-		t.insertInOrder(root, 'h');
+		/*t.insertInOrder(root, 'h');*/
 		t.preorder(root);
 		System.out.println("\n");
 		BinaryTreeNode temp = t.deepestNode(root);

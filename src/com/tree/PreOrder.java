@@ -7,32 +7,22 @@ import java.util.Stack;
 public class PreOrder {
 	public ArrayList<Character> preordertraversal(BinaryTreeNode root) {
 		ArrayList<Character> res= new ArrayList<Character>();
-		if(root == null) {
+		if(root==null) {
 			return res;
 		}
-		Stack<BinaryTreeNode> s = new  Stack<BinaryTreeNode>();
+		Stack<BinaryTreeNode> s = new Stack<BinaryTreeNode>();
 		s.push(root);
-		BinaryTreeNode prev = null;
 		while(!s.isEmpty()) {
-			BinaryTreeNode curr = s.peek();
-			if(prev==null || prev.getLeft() == curr || prev.getRight()==curr) {
-				if(curr.getLeft()!=null) {
-					s.push(curr.getLeft());
+			BinaryTreeNode temp = s.pop();
+			if(temp!=null) {
+				res.add(temp.getData());
+				if(temp.getRight()!=null) {
+					s.push(temp.getRight());
 				}
-				else if(curr.getRight()!=null) {
-					s.push(curr.getRight());
-				}
-			}
-			else if(curr.getLeft()==prev) {
-				if(curr.getRight()!=null) {
-					s.push(curr.getRight());
+				if(temp.getLeft()!=null) {
+					s.push(temp.getLeft());
 				}
 			}
-			else {
-				res.add(curr.getData());
-				s.pop();
-			}
-			prev = curr;
 		}
 		return res;
 	}

@@ -66,6 +66,9 @@ public class BinarySearchTree {
 		}
 		return root;
 	}
+	public BinarySearchTreeNode findSuccessor(BinarySearchTreeNode root,int data) {
+		return root;
+	}
 	public ArrayList<Integer> preorder(BinarySearchTreeNode root) {
 		ArrayList<Integer> res = new ArrayList<Integer>();
 		if(root==null) {

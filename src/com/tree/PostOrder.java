@@ -7,27 +7,32 @@ import java.util.Stack;
 public class PostOrder {
 	public ArrayList<Character> postorder(BinaryTreeNode root) {
 		ArrayList<Character> res= new ArrayList<Character>();
-		if(root == null) {
+		if(root==null) {
 			return res;
 		}
-		Stack<BinaryTreeNode> s = new  Stack<BinaryTreeNode>();
-		BinaryTreeNode current = root;
-		boolean done = false;
-		while(!done) {
-			if(current!=null) {
-				s.push(current);
-				current = current.getLeft();
+		BinaryTreeNode prev =null;
+		Stack<BinaryTreeNode> s= new Stack<BinaryTreeNode>();
+		s.push(root);
+		while(!s.isEmpty()) {
+			BinaryTreeNode curr = s.peek();
+			if(prev==null || prev.getLeft()==curr || prev.getRight() == curr) {
+				if(curr.getLeft()!=null) {
+					s.push(curr.getLeft());
+				}
+				else if(curr.getRight()!=null) {
+					s.push(curr.getRight());
+				}
+			}
+			else if(curr.getLeft()==prev) {
+				if(curr.getRight()!=null) {
+					s.push(curr.getRight());
+				}
 			}
 			else {
-				if(s.isEmpty()) {
-					done = true;
-				}
-				else {
-					current = s.pop();
-					res.add(current.getData());
-					current = current.getRight();
-				}
+				res.add(curr.getData());
+				s.pop();
 			}
+			prev = curr;
 		}
 		return res;
 	}

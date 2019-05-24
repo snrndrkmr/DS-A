@@ -16,11 +16,13 @@ public class LevelOrder {
 		while(!q.isEmpty()) {
 			BinaryTreeNode temp = q.poll();
 			res.add(temp.getData());
-			if(temp.getLeft()!=null) {
-				q.offer(temp.getLeft());
-			}
-			if(temp.getRight()!=null) {
-				q.offer(temp.getRight());
+			if(temp!=null) {
+				if(temp.getLeft()!=null) {
+					q.offer(temp.getLeft());
+				}
+				if(temp.getRight()!=null) {
+					q.offer(temp.getRight());
+				}
 			}
 		}
 		return res;

@@ -30,7 +30,7 @@ public class InOrder {
 			}
 		}
 		return res;
-	}
+}
 	public static void main(String[] args) {
 		BinaryTree t = new BinaryTree();
 		InOrder i = new InOrder();

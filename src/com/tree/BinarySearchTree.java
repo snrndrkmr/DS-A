@@ -66,8 +66,85 @@ public class BinarySearchTree {
 		}
 		return root;
 	}
-	public BinarySearchTreeNode findSuccessor(BinarySearchTreeNode root,int data) {
+	public BinarySearchTreeNode delete(BinarySearchTreeNode root, int data) {
+		
+		Stack<BinarySearchTreeNode> s = new Stack<BinarySearchTreeNode>();
+		s.push(root);
+		while(!s.isEmpty()) {
+			BinarySearchTreeNode temp = s.pop();
+			if (temp != null) {
+				if (temp.getData() == data) {
+					BinarySearchTreeNode succ = findSuccessor(root);
+					BinarySearchTreeNode pare = parentSuccesor(root);
+					temp.setData(succ.getData());
+					if (pare.getRight() == succ) {
+						pare.setRight(null);
+					}
+				}
+				if(temp.getData() > data) {
+					if(temp.getLeft()!=null) {
+						if(temp.getLeft().getData() == data) {
+							BinarySearchTreeNode succ = findSuccessor(root);
+							BinarySearchTreeNode pare = parentSuccesor(root);
+							temp.setData(succ.getData());
+							if (pare.getRight() == succ) {
+								pare.setRight(null);
+							}
+						}
+						s.push(temp.getLeft());
+					}
+					else if(temp.getRight()!=null) {
+						if(temp.getRight().getData() == data) {
+							BinarySearchTreeNode succ = findSuccessor(root);
+							BinarySearchTreeNode pare = parentSuccesor(root);
+							temp.setData(succ.getData());
+							if (pare.getRight() == succ) {
+								pare.setRight(null);
+							}
+						}
+						s.push(temp.getRight());
+					}
+				}
+			}
+		}
 		return root;
+	}
+
+	public BinarySearchTreeNode parentSuccesor(BinarySearchTreeNode root) {
+		if (root == null) {
+			return null;
+		}
+		Queue<BinarySearchTreeNode> q = new LinkedList<BinarySearchTreeNode>();
+		q.offer(root);
+		while (!q.isEmpty()) {
+			BinarySearchTreeNode temp = q.poll();
+			if (temp != null) {
+				if (temp.getRight() != null) {
+					if (temp.getRight() == findSuccessor(root)) {
+						return temp;
+					}
+					q.offer(temp.getRight());
+				}
+				if (temp.getLeft() != null) {
+					if (temp.getLeft() == findSuccessor(root)) {
+						return temp;
+					}
+					q.offer(temp.getLeft());
+				}
+			}
+		}
+		return root;
+	}
+	public BinarySearchTreeNode findSuccessor(BinarySearchTreeNode root) {
+		if(root==null) {
+			return null;
+		}
+		BinarySearchTreeNode current = root.getLeft();
+		while(current!=null) {
+			current = current.getRight();
+			return current;
+		}
+		return current;
 	}
 	public ArrayList<Integer> preorder(BinarySearchTreeNode root) {
 		ArrayList<Integer> res = new ArrayList<Integer>();
@@ -85,6 +162,32 @@ public class BinarySearchTree {
 				}
 				if(temp.getLeft()!=null) {
 					s.push(temp.getLeft());
+				}
+			}
+		}
+		return res;
+	}
+	public ArrayList<Integer> inorder(BinarySearchTreeNode root){
+		ArrayList<Integer> res = new ArrayList<Integer>();
+		if(root==null) {
+			return res;
+		}
+		Stack<BinarySearchTreeNode> s = new Stack<BinarySearchTreeNode>();
+		BinarySearchTreeNode current = root;
+		boolean done = false;
+		while(!done) {
+			if(current!=null) {
+				s.push(current);
+				current = current.getLeft();
+			}
+			else {
+				if(s.isEmpty()) {
+					done = true;
+				}
+				else {
+					current = s.pop();
+					res.add(current.getData());
+					current = current.getRight();
 				}
 			}
 		}
@@ -108,13 +211,6 @@ public class BinarySearchTree {
 		t.insertion(root, 6);
 		t.insertion(root, 7);
 		t.insertion(root, 8);*/
-		ArrayList<Integer> res = new ArrayList<Integer>();
-		res = t.preorder(root);
-		Iterator<Integer> iter = res.iterator();
-		while(iter.hasNext()) {
-			System.out.print(iter.next()+" ");
-		}
-		System.out.println("\n");
 		int i =34;
 		BinarySearchTreeNode var = t.search(root, i);
 		if(var.getData()==i) {
@@ -123,5 +219,18 @@ public class BinarySearchTree {
 		else {
 			System.out.println("data not found "+var.getData());
 		}
+		BinarySearchTreeNode succ = t.findSuccessor(root);
+		System.out.println(succ.getData());
+		BinarySearchTreeNode pare = t.parentSuccesor(root);
+		System.out.println(pare.getData());
+		
+		t.delete(root, 11);
+		ArrayList<Integer> res = new ArrayList<Integer>();
+		res = t.inorder(root);
+		Iterator<Integer> iter = res.iterator();
+		while(iter.hasNext()) {
+			System.out.print(iter.next()+" ");
+		}
+		System.out.println("\n");
 	}
 }

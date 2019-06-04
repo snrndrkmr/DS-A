@@ -44,6 +44,73 @@ public class BinarySearchTree {
 		}
 		return root;
 	}
+	public BinarySearchTreeNode FindMin(BinarySearchTreeNode root) {
+		if(root==null) {
+			return root;
+		}
+		while(root.getLeft()!=null) {
+			root = root.getLeft();
+		}
+		return root;
+	}
+	public BinarySearchTreeNode FindMax(BinarySearchTreeNode root) {
+		if(root==null) {
+			return root;
+		}
+		while(root.getRight()!=null) {
+			root = root.getRight();
+		}
+		return root;
+	}
+	public BinarySearchTreeNode delete(BinarySearchTreeNode root,int data) {
+		if (root == null)
+			return null;
+		if (root.getData() > data) {
+			root.setLeft(delete(root.getLeft(), data)); 
+		} else if (root.getData()< data) {
+			root.setRight(delete(root.getRight(), data));
+ 
+		} else {
+			// if nodeToBeDeleted have both children
+			if (root.getLeft() != null && root.getRight() != null) {
+				BinarySearchTreeNode minNodeForRight = FindMin(root.getRight());
+				root.setData(minNodeForRight.getData());
+				delete(root.getRight(), minNodeForRight.getData());
+ 
+			}
+			// if nodeToBeDeleted has only left child
+			else if (root.getLeft() != null) {
+				BinarySearchTreeNode temp = root;
+				root = root.getLeft();
+				temp = null;
+			}
+			// if nodeToBeDeleted has only right child
+			else if (root.getRight() != null) {
+				BinarySearchTreeNode temp = root;
+				root = root.getRight();
+				temp = null;
+			}
+			// if nodeToBeDeleted do not have child (Leaf node)
+			else
+				root = null;
+		}
+		return root;
+	}
+	public BinarySearchTreeNode deleteNode(BinarySearchTreeNode root, int data) {
+		if(root==null) {
+			return null;
+		}
+		root = search(root,data);
+		root = root.getRight();
+		BinarySearchTreeNode temp = FindMin(root.getRight());
+		while(root.getLeft()!=null) {
+			if(root.getData()==temp.getData()) {
+				return temp;
+			}
+			root = root.getLeft();
+		}
+		return root;
+	}
 	public ArrayList<Integer> inorder(BinarySearchTreeNode root) {
 		if(root==null) {
 			return null;
@@ -122,34 +189,45 @@ public class BinarySearchTree {
 		}
 		return res;
 	}
-	public static void main(String[] args) {
-		BinarySearchTreeNode root = null;
-		BinarySearchTree t = new BinarySearchTree();
-		root = t.insertion(root, 25);
-		root = t.insertion(root, 15);
-		root = t.insertion(root, 35);
-		root = t.insertion(root, 30);
-		root = t.insertion(root, 40);
-		root = t.insertion(root, 10);
-		root = t.insertion(root, 20);
-		root = t.insertion(root, 29);
-		root = t.insertion(root, 32);
-		root = t.insertion(root, 39);
-		root = t.insertion(root, 41);
-		root = t.insertion(root, 9);
-		root = t.insertion(root, 11);
-		root = t.insertion(root, 19);
-		root = t.insertion(root, 21);
-		root = t.insertion(root, 26);
-		root = t.insertion(root, 27);
-		root = t.insertion(root, 28);
-		root = t.insertion(root, 31);
-		ArrayList<Integer> res= t.inorder(root);
+	public ArrayList<Integer> print(BinarySearchTreeNode root){
+		ArrayList<Integer> res= inorder(root);
 		Iterator<Integer> iter = res.iterator();
 		while(iter.hasNext()) {
 			System.out.print(iter.next()+" ");
 		}
-		System.out.println("\n");
+		return res;
+	}
+	public void inordertrav(BinarySearchTreeNode root) {
+		if(root==null) {
+			return;
+		}
+		inordertrav(root.getLeft());
+		System.out.print(root.getData()+" ");
+		inordertrav(root.getRight());
+	}
+	public static void main(String[] args) {
+		BinarySearchTreeNode root = new BinarySearchTreeNode(25);
+		BinarySearchTree t = new BinarySearchTree();
+		t.insertion(root, 15);
+		t.insertion(root, 35);
+		t.insertion(root, 30);
+		t.insertion(root, 40);
+		t.insertion(root, 10);
+		t.insertion(root, 20);
+		t.insertion(root, 29);
+		t.insertion(root, 32);
+		t.insertion(root, 33);
+		t.insertion(root, 39);
+		t.insertion(root, 41);
+		t.insertion(root, 9);
+		t.insertion(root, 11);
+		t.insertion(root, 19);
+		t.insertion(root, 21);
+		t.insertion(root, 26);
+		t.insertion(root, 27);
+		t.insertion(root, 28);
+		t.inordertrav(root);
+		System.out.println();
 		int data = 25 ;
 		BinarySearchTreeNode temp = t.search(root, data);
 		if(temp.getData()==data) {
@@ -159,5 +237,12 @@ public class BinarySearchTree {
 			System.out.println("False");
 		}
 		System.out.println(t.inordersuccessor(root, 25).getData());
+		System.out.println(t.FindMin(root).getData());
+		System.out.println(t.FindMax(root).getData());
+		System.out.println();
+		t.delete(root,30);
+		t.delete(root, 39);
+		t.delete(root, 19);
+		t.inordertrav(root);
 	}
 }

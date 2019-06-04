@@ -75,20 +75,16 @@ public class BinarySearchTree {
 			if (root.getLeft() != null && root.getRight() != null) {
 				BinarySearchTreeNode minNodeForRight = FindMin(root.getRight());
 				root.setData(minNodeForRight.getData());
-				delete(root.getRight(), minNodeForRight.getData());
+				root.setRight(delete(root.getRight(), minNodeForRight.getData()));
  
 			}
 			// if nodeToBeDeleted has only left child
 			else if (root.getLeft() != null) {
-				BinarySearchTreeNode temp = root;
 				root = root.getLeft();
-				temp = null;
 			}
 			// if nodeToBeDeleted has only right child
 			else if (root.getRight() != null) {
-				BinarySearchTreeNode temp = root;
 				root = root.getRight();
-				temp = null;
 			}
 			// if nodeToBeDeleted do not have child (Leaf node)
 			else
@@ -216,6 +212,7 @@ public class BinarySearchTree {
 		t.insertion(root, 20);
 		t.insertion(root, 29);
 		t.insertion(root, 32);
+		t.insertion(root, 34);
 		t.insertion(root, 33);
 		t.insertion(root, 39);
 		t.insertion(root, 41);
@@ -241,8 +238,6 @@ public class BinarySearchTree {
 		System.out.println(t.FindMax(root).getData());
 		System.out.println();
 		t.delete(root,30);
-		t.delete(root, 39);
-		t.delete(root, 19);
 		t.inordertrav(root);
 	}
 }

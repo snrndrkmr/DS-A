@@ -203,7 +203,26 @@ public class BinarySearchTree {
 		System.out.print(root.getData() + " ");
 		inordertrav(root.getRight());
 	}
-
+	
+	public int Max(int left, int right) {
+		if(left > right) {
+			return left;
+		}
+		else if(right > left) {
+		return right;
+		}
+		else {
+			return left;
+		}
+	}
+	public int Height(BinarySearchTreeNode root) {
+		if(root == null) {
+			return -1;
+		}
+		int left = Height(root.getLeft());
+		int right = Height(root.getRight());
+		return Max(left , right)+1;
+	}
 	public static void main(String[] args) {
 		BinarySearchTreeNode root = new BinarySearchTreeNode(25);
 		BinarySearchTree t = new BinarySearchTree();
@@ -239,7 +258,9 @@ public class BinarySearchTree {
 		System.out.println(t.FindMin(root).getData());
 		System.out.println(t.FindMax(root).getData());
 		System.out.println();
-		t.delete(root, 30);
-		t.inordertrav(root);
+		/*t.delete(root, 30);
+		t.inordertrav(root);*/
+		int res = t.Height(root);
+		System.out.println("Height of the binary tree: "+ res);
 	}
 }

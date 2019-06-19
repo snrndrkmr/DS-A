@@ -38,24 +38,64 @@ public class AVLTree {
 		if(root==null) {
 			return -1;
 		}
-		else {
-		return root.getHeight();
+		int left = Height(root.getLeft());
+		int right = Height(root.getRight());
+		return Math.max(left, right)+1;
+	}
+	public AVLTreeNode delete(AVLTreeNode root,int data) {
+		if(root==null) {
+			return null;
 		}
+		else if(data < root.getData()) {
+			root.setLeft(delete(root.getLeft(),data));
+			if(Height(root.getLeft())-Height(root.getRight()) == 2) {
+				if(data < root.getLeft().getData()) {
+					root = rightSingleRotate(root);
+				}
+				else {
+					root = leftRightDoubleRotate(root);
+				}
+			}
+		}
+		else if(data > root.getData()) {
+			root.setRight(delete(root.getRight(),data));
+			if(Height(root.getLeft())-Height(root.getRight()) == 2) {
+				if(data > root.getLeft().getData()) {
+					root = leftSingleRotate(root);
+				}
+				else {
+					root = rightLeftDoubleRotate(root);
+				}
+			}
+		}
+		else {
+			if(root.getLeft()!=null && root.getRight()!=null) {
+				AVLTreeNode min = FindMin(root.getRight());
+				root.setData(min.getData());
+				root.setRight(delete(root.getRight(),min.getData()));
+			}
+			else if(root.getLeft()!=null) {
+				root = root.getLeft();
+			}
+			else if(root.getRight()!=null) {
+				root = root.getRight();
+			}
+			else {
+				root = null;
+			}
+		}
+		return root;
 	}
 	public AVLTreeNode rightSingleRotate(AVLTreeNode root) {
 		AVLTreeNode newRoot = root.getLeft();
 		root.setLeft(newRoot.getRight());
 		newRoot.setRight(root);
-		root.setHeight(Math.max(Height(root.getLeft()), Height(root.getRight()))+1);
-		newRoot.setHeight(Math.max(Height(newRoot.getLeft()), root.getHeight())+1);
 		return newRoot;
 	}
 	public AVLTreeNode leftSingleRotate(AVLTreeNode root) {
 		AVLTreeNode newRoot = root.getRight();
 		root.setRight(newRoot.getRight());
 		newRoot.setLeft(root);
-		root.setHeight(Math.max(Height(root.getLeft()), Height(root.getRight()))+1);
-		newRoot.setHeight(Math.max(Height(newRoot.getLeft()), root.getHeight())+1);
 		return newRoot;
 	}
 	public AVLTreeNode leftRightDoubleRotate(AVLTreeNode root) {
@@ -67,22 +107,23 @@ public class AVLTree {
 		return leftSingleRotate(root);
 	}
 	public ArrayList<Integer> inorder(AVLTreeNode root){
+		ArrayList<Integer> res= new ArrayList<Integer>();
 		if(root == null) {
 			return null;
 		}
-		ArrayList<Integer> res = new ArrayList<Integer>();
-		Stack<AVLTreeNode> s = new Stack<AVLTreeNode>();
-		s.push(root);
+		Stack<AVLTreeNode> s = new  Stack<AVLTreeNode>();
 		AVLTreeNode current = root;
 		boolean done = false;
-		while (!done) {
-			if (current != null) {
+		while(!done) {
+			if(current!=null) {
 				s.push(current);
 				current = current.getLeft();
-			} else {
-				if (s.isEmpty()) {
+			}
+			else {
+				if(s.isEmpty()) {
 					done = true;
-				} else {
+				}
+				else {
 					current = s.pop();
 					res.add(current.getData());
 					current = current.getRight();
@@ -91,12 +132,20 @@ public class AVLTree {
 		}
 		return res;
 	}
+	public void inordertrav(AVLTreeNode root) {
+		if (root == null) {
+			return;
+		}
+		inordertrav(root.getLeft());
+		System.out.print(root.getData() + " ");
+		inordertrav(root.getRight());
+	}
 	
 	public ArrayList<Integer> postorder(AVLTreeNode root){
-		if(root == null) {
-			return null;
-		}
 		ArrayList<Integer> res = new ArrayList<Integer>();
+		if(root == null) {
+			return res;
+		}
 		Stack<AVLTreeNode> s = new Stack<AVLTreeNode>();
 		s.push(root);
 		AVLTreeNode prev = null;
@@ -124,10 +173,10 @@ public class AVLTree {
 		return res;
 	}
 	public ArrayList<Integer> preorder(AVLTreeNode root){
-		if(root == null) {
-			return null;
-		}
 		ArrayList<Integer> res = new ArrayList<Integer>();
+		if(root == null) {
+			return res;
+		}
 		Stack<AVLTreeNode> s = new Stack<AVLTreeNode>();
 		s.push(root);
 		while(!s.isEmpty()) {
@@ -148,14 +197,23 @@ public class AVLTree {
 		if(root == null) {
 			return null;
 		}
+		else if(data == root.getData()) {
+			return root;
+		}
 		else if(data < root.getData()) {
-			searchAVL(root.getLeft(),data);
+			return searchAVL(root.getLeft(),data);
 		}
 		else if(data > root.getData()) {
-			searchAVL(root.getRight(),data);
+			return searchAVL(root.getRight(),data);
 		}
-		else {
-			return root;
+		return root;
+	}
+	public AVLTreeNode FindMin(AVLTreeNode root) {
+		if(root==null) {
+			return null;
+		}
+		while(root.getLeft()!=null) {
+			root = root.getLeft();
 		}
 		return root;
 	}
@@ -169,11 +227,31 @@ public class AVLTree {
 		t.insert(root, 10);
 		t.insert(root, 20);
 		t.insert(root, 5);
+		t.insert(root, 3);
 		t.insert(root, 1);
-		ArrayList<Integer> res = t.inorder(root);
+		t.inordertrav(root);
+		System.out.println();
+		ArrayList<Integer> res = t.preorder(root);
 		Iterator<Integer> iter = res.iterator();
 		while(iter.hasNext()) {
 			System.out.print(iter.next()+ " ");
+		}
+		System.out.println();
+		int data = 25;
+		AVLTreeNode search = t.searchAVL(root, data);
+		if(data == search.getData()) {
+			System.out.println("Success data found "+search.getData());
+		} else{
+			System.out.println("Failure data not found "+ search.getData());
+		}
+		System.out.println();
+		t.delete(root,data);
+		t.inordertrav(root);
+		System.out.println();
+		ArrayList<Integer> res1 = t.preorder(root);
+		Iterator<Integer> iter1 = res1.iterator();
+		while(iter1.hasNext()) {
+			System.out.print(iter1.next()+ " ");
 		}
 	}
 }

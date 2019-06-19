@@ -4,13 +4,28 @@ public class AVLTreeNode {
 	private int data;
 	private AVLTreeNode left;
 	private AVLTreeNode right;
+	private int height;
 	
 	public AVLTreeNode(int data) {
 		this.data = data;
 		this.left = null;
 		this.right = null;
+		this.height =1;
 	}
 	
+	public int getHeight() {
+		return height;
+	}
+
+	@Override
+	public String toString() {
+		return "AVLTreeNode [data=" + data + ", left=" + left + ", right=" + right + ", height=" + height + "]";
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+
 	public void setData(int data) {
 		this.data = data;
 	}

@@ -12,67 +12,49 @@ public class AVLTree {
 		}
 		else if(data < root.getData()) {
 			root.setLeft(insert(root.getLeft(),data));
-			if(Height(root.getLeft())-Height(root.getRight()) == 2) {
-				if(data < root.getLeft().getData()) {
-					root = rightSingleRotate(root);
-				}
-				else {
-					root = leftRightDoubleRotate(root);
-				}
-			}
 		}
 		else if(data > root.getData()) {
 			root.setRight(insert(root.getRight(),data));
-			if(Height(root.getLeft())-Height(root.getRight()) == 2) {
-				if(data > root.getLeft().getData()) {
-					root = leftSingleRotate(root);
-				}
-				else {
-					root = rightLeftDoubleRotate(root);
-				}
-			}
+		}
+		root.setHeight(Math.max(Height(root.getLeft()),Height(root.getRight()))+1);
+		int balance = getBalance(root);
+		if(balance>1 && data < root.getLeft().getData()) {
+			return rightSingleRotate(root);
+		}
+		if(balance< -1 && data > root.getRight().getData()) {
+			return leftSingleRotate(root);
+		}
+		if(balance>1 && data > root.getLeft().getData()) {
+			root.setLeft(leftSingleRotate(root.getLeft()));
+			return rightSingleRotate(root);
+		}
+		if(balance< -1 && data < root.getRight().getData()) {
+			root.setRight(rightSingleRotate(root.getRight()));
+			return leftSingleRotate(root);
 		}
 		return root;
 	}
 	public int Height(AVLTreeNode root) {
 		if(root==null) {
-			return -1;
+			return 0;
 		}
-		int left = Height(root.getLeft());
-		int right = Height(root.getRight());
-		return Math.max(left, right)+1;
+		return root.getHeight();
 	}
 	public AVLTreeNode delete(AVLTreeNode root,int data) {
 		if(root==null) {
-			return null;
+			return root;
 		}
 		else if(data < root.getData()) {
 			root.setLeft(delete(root.getLeft(),data));
-			if(Height(root.getLeft())-Height(root.getRight()) == 2) {
-				if(data < root.getLeft().getData()) {
-					root = rightSingleRotate(root);
-				}
-				else {
-					root = leftRightDoubleRotate(root);
-				}
-			}
 		}
 		else if(data > root.getData()) {
 			root.setRight(delete(root.getRight(),data));
-			if(Height(root.getLeft())-Height(root.getRight()) == 2) {
-				if(data > root.getLeft().getData()) {
-					root = leftSingleRotate(root);
-				}
-				else {
-					root = rightLeftDoubleRotate(root);
-				}
-			}
 		}
 		else {
 			if(root.getLeft()!=null && root.getRight()!=null) {
-				AVLTreeNode min = FindMin(root.getRight());
+				AVLTreeNode min = FindMax(root.getLeft());
 				root.setData(min.getData());
-				root.setRight(delete(root.getRight(),min.getData()));
+				root.setLeft(delete(root.getLeft(),min.getData()));
 			}
 			else if(root.getLeft()!=null) {
 				root = root.getLeft();
@@ -84,27 +66,50 @@ public class AVLTree {
 				root = null;
 			}
 		}
+		if(root==null) {
+			return root;
+		}
+		root.setHeight(Math.max(Height(root.getLeft()),Height(root.getRight()))+1);
+		int balance = getBalance(root);
+		if(balance>1 && getBalance(root.getLeft())>=0) {
+			return rightSingleRotate(root);
+		}
+		if(balance>1 && getBalance(root.getLeft())<0) {
+			root.setLeft(leftSingleRotate(root.getLeft()));
+			return rightSingleRotate(root);
+		}
+		if(balance< -1 && getBalance(root.getRight())<=0) {
+			return leftSingleRotate(root);
+		}
+		if(balance< -1 && getBalance(root.getRight())>0) {
+			root.setRight(rightSingleRotate(root.getRight()));
+			return leftSingleRotate(root);
+		}
 		return root;
 	}
 	public AVLTreeNode rightSingleRotate(AVLTreeNode root) {
 		AVLTreeNode newRoot = root.getLeft();
-		root.setLeft(newRoot.getRight());
+		AVLTreeNode temp = newRoot.getRight();
 		newRoot.setRight(root);
+		root.setLeft(temp);
+		root.setHeight(Math.max(Height(root.getLeft()),Height(root.getRight()))+1);
+		newRoot.setHeight(Math.max(Height(newRoot.getLeft()),Height(newRoot.getRight()))+1);
 		return newRoot;
 	}
 	public AVLTreeNode leftSingleRotate(AVLTreeNode root) {
 		AVLTreeNode newRoot = root.getRight();
-		root.setRight(newRoot.getRight());
+		AVLTreeNode temp = newRoot.getLeft();
 		newRoot.setLeft(root);
+		root.setRight(temp);
+		root.setHeight(Math.max(Height(root.getLeft()),Height(root.getRight()))+1);
+		newRoot.setHeight(Math.max(Height(newRoot.getLeft()),Height(newRoot.getRight()))+1);
 		return newRoot;
 	}
-	public AVLTreeNode leftRightDoubleRotate(AVLTreeNode root) {
-		root.setLeft(leftSingleRotate(root.getLeft()));
-		return rightSingleRotate(root);
-	}
-	public AVLTreeNode rightLeftDoubleRotate(AVLTreeNode root) {
-		root.setRight(rightSingleRotate(root.getRight()));
-		return leftSingleRotate(root);
+	public int getBalance(AVLTreeNode root) {
+		if(root==null) {
+			return 0;
+		}
+		return Height(root.getLeft())-Height(root.getRight());
 	}
 	public ArrayList<Integer> inorder(AVLTreeNode root){
 		ArrayList<Integer> res= new ArrayList<Integer>();
@@ -217,18 +222,30 @@ public class AVLTree {
 		}
 		return root;
 	}
+	public AVLTreeNode FindMax(AVLTreeNode root) {
+		if(root==null) {
+			return null;
+		}
+		while(root.getRight()!=null) {
+			root = root.getRight();
+		}
+		return root;
+	}
 	public static void main(String[] args) {
 		AVLTree t = new AVLTree();
-		AVLTreeNode root = new AVLTreeNode(25);
-		t.insert(root, 35);
-		t.insert(root, 15);
-		t.insert(root, 30);
-		t.insert(root, 40);
-		t.insert(root, 10);
-		t.insert(root, 20);
-		t.insert(root, 5);
-		t.insert(root, 3);
-		t.insert(root, 1);
+		AVLTreeNode root = null;
+		root = t.insert(root, 25);
+		root = t.insert(root, 35);
+		root = t.insert(root, 15);
+		root = t.insert(root, 30);
+		root = t.insert(root, 40);
+		root = t.insert(root, 45);
+		root = t.insert(root, 50);
+		root = t.insert(root, 10);
+		root = t.insert(root, 20);
+		root = t.insert(root, 5);
+		root = t.insert(root, 3);
+		root = t.insert(root, 1);
 		t.inordertrav(root);
 		System.out.println();
 		ArrayList<Integer> res = t.preorder(root);
@@ -245,7 +262,8 @@ public class AVLTree {
 			System.out.println("Failure data not found "+ search.getData());
 		}
 		System.out.println();
-		t.delete(root,data);
+		t.delete(root,25);
+		t.delete(root, 30);
 		t.inordertrav(root);
 		System.out.println();
 		ArrayList<Integer> res1 = t.preorder(root);
@@ -253,5 +271,6 @@ public class AVLTree {
 		while(iter1.hasNext()) {
 			System.out.print(iter1.next()+ " ");
 		}
+		System.out.println();
 	}
 }

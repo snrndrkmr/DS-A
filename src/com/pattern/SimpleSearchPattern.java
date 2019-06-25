@@ -9,15 +9,13 @@ public class SimpleSearchPattern {
 	public void Search(String string) throws IOException{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String sub = br.readLine();
-		char[] container = string.toCharArray();
-		char[] search = sub.toCharArray();
-		int m = search.length;
-		int n = container.length;
-		for(int i=0;i<n-m;i++) {
+		int n = string.length();
+		int m = sub.length();
+		for(int i=0;i<=n-m;i++) {
 			int j=0;
-			while(j<m && search[j]==container[i+j]) {
-				System.out.print(search[j]+" ");
-				System.out.print(container[i+j]+" ");
+			while(j<m && sub.charAt(j)==string.charAt(i+j)) {
+				System.out.print(sub.charAt(j)+" ");
+				System.out.print(string.charAt(i+j)+" ");
 				System.out.println();
 				j = j+1;
 			}
@@ -42,6 +40,6 @@ public class SimpleSearchPattern {
 		String name = br.readLine();
 		System.out.println("your age is: "+age+" and name is :"+name);*/
 		System.out.println("search here:");
-		pt.Search("narendra");
+		pt.Search("abcdefghij");
 	}
 }

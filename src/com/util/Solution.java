@@ -5,7 +5,6 @@ import java.text.*;
 import java.math.*;
 import java.util.regex.*;
 import java.net.*;
-import com.google.gson.*;
 
 public class Solution {
     /*
@@ -17,23 +16,28 @@ public class Solution {
         int first_page = 1;
         int total_pages = Integer.MAX_VALUE;
         ArrayList<String> title = new ArrayList<String>();
+        Pattern totalPagesPattern = Pattern.compile("\"total_pages\"\\s*:\\s*(\\d+)");
+        Pattern titlePattern = Pattern.compile("\"Title\"\\s*:\\s*\"((?:\\\\.|[^\"\\\\])*)\"");
         while(first_page <= total_pages){
             try{
                 URL url = new URL("https://jsonmock.hackerrank.com/api/movies/search/?Title="+substr+"&page="+first_page);
                 HttpURLConnection con = (HttpURLConnection)url.openConnection();
                 con.setRequestMethod("GET");
                 BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                StringBuilder response = new StringBuilder();
                 String result;
                 while((result = br.readLine())!=null){
-                    JsonObject  jobj = new Gson().fromJson(result, JsonObject.class);
-                    total_pages = jobj.get("total_pages").getAsInt();
-                    JsonArray data = jobj.getAsJsonArray("data");
-                    for(int i=0;i<data.size();i++){
-                        String Title = data.get(i).getAsJsonObject().get("Title").getAsString();
-                        title.add(Title);
-                    }
+                    response.append(result);
                 }
                 br.close();
+                Matcher pagesMatcher = totalPagesPattern.matcher(response);
+                if (pagesMatcher.find()) {
+                    total_pages = Integer.parseInt(pagesMatcher.group(1));
+                }
+                Matcher titleMatcher = titlePattern.matcher(response);
+                while (titleMatcher.find()) {
+                    title.add(unescapeJsonString(titleMatcher.group(1)));
+                }
                 first_page++;
             }
             catch(Exception e){
@@ -43,6 +47,36 @@ public class Solution {
         }
         Collections.sort(title);
         return title.toArray(new String[0]);
+    }
+
+    private static String unescapeJsonString(String value) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < value.length(); i++) {
+            char current = value.charAt(i);
+            if (current != '\\' || i + 1 >= value.length()) {
+                result.append(current);
+                continue;
+            }
+            char escaped = value.charAt(++i);
+            switch (escaped) {
+                case '"': result.append('"'); break;
+                case '\\': result.append('\\'); break;
+                case '/': result.append('/'); break;
+                case 'b': result.append('\b'); break;
+                case 'f': result.append('\f'); break;
+                case 'n': result.append('\n'); break;
+                case 'r': result.append('\r'); break;
+                case 't': result.append('\t'); break;
+                case 'u':
+                    if (i + 4 < value.length()) {
+                        result.append((char) Integer.parseInt(value.substring(i + 1, i + 5), 16));
+                        i += 4;
+                    }
+                    break;
+                default: result.append(escaped);
+            }
+        }
+        return result.toString();
     }
 
     public static void main(String[] args) throws IOException{
